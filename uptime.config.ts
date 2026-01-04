@@ -7,66 +7,58 @@ import { MaintenanceConfig, PageConfig, WorkerConfig } from './types/config'
 
 const pageConfig: PageConfig = {
   // Title for your status page
-  title: "lyc8503's Status Page",
+  title: "凌云·LinYun 状态监控",
   // Links shown at the header of your status page, could set `highlight` to `true`
   links: [
-    { link: 'https://github.com/lyc8503', label: 'GitHub' },
-    { link: 'https://blog.lyc8503.net/', label: 'Blog' },
-    { link: 'mailto:me@lyc8503.net', label: 'Email Me', highlight: true },
+    { link: 'https://blog.linyunlink.top/', label: 'Blog' },
+    { link: 'mailto:linyun@linyunlink.top', label: 'Email Me', highlight: true },
   ],
 }
 
 const workerConfig: WorkerConfig = {
   // Define all your monitors here
-  monitors: [
-    // Example HTTP Monitor
+monitors: [
+    // ==========[凌云服务监控]==========
     {
-      // `id` should be unique, history will be kept if the `id` remains constant
-      id: 'foo_monitor',
-      // `name` is used at status page and callback message
-      name: 'My API Monitor',
-      // `method` should be a valid HTTP Method
+      id: 'linyun_homepage_monitor',
+      name: '凌云·LinYun 主页',
       method: 'GET',
-      // `target` is a valid URL
-      target: 'https://example.com',
-      // [OPTIONAL] `tooltip` is ONLY used at status page to show a tooltip
-      tooltip: 'This is a tooltip for this monitor',
-      // [OPTIONAL] `statusPageLink` is ONLY used for clickable link at status page
-      statusPageLink: 'https://example.com',
-      // [OPTIONAL] `expectedCodes` is an array of acceptable HTTP response codes, if not specified, default to 2xx
-      expectedCodes: [200],
-      // [OPTIONAL] `timeout` in millisecond, if not specified, default to 10000
-      timeout: 10000,
-      // [OPTIONAL] headers to be sent
-      headers: {
-        'User-Agent': 'Uptimeflare',
-        Authorization: 'Bearer YOUR_TOKEN_HERE',
-      },
-      // [OPTIONAL] body to be sent (require POST/PUT/PATCH method)
-      // body: 'Hello, world!',
-      // [OPTIONAL] if specified, the response must contains the keyword to be considered as operational.
-      // responseKeyword: 'success',
-      // [OPTIONAL] if specified, the response must NOT contains the keyword to be considered as operational.
-      // responseForbiddenKeyword: 'bad gateway',
-      // [OPTIONAL] if specified, will call the check proxy to check the monitor, mainly for geo-specific checks
-      // refer to docs https://github.com/lyc8503/UptimeFlare/wiki/Check-proxy-setup before setting this value
-      // currently supports `worker://`, `globalping://` and `http(s)://` proxies
-      // checkProxy: 'worker://weur',
-      // [OPTIONAL] if true, the check will fallback to local if the specified proxy is down
-      // checkProxyFallback: true,
+      target: 'https://www.linyunlink.top/',
+      tooltip: '凌云·LinYun 博客',
+      statusPageLink: 'https://www.linyunlink.top/',
     },
-    // Example TCP Monitor
     {
-      id: 'test_tcp_monitor',
-      name: 'Example TCP Monitor',
-      // `method` should be `TCP_PING` for tcp monitors
-      method: 'TCP_PING',
-      // `target` should be `host:port` for tcp monitors
-      target: '1.2.3.4:22',
-      tooltip: 'My production server SSH',
-      statusPageLink: 'https://example.com',
-      timeout: 5000,
+      id: 'linyun_blog_monitor',
+      name: '凌云·LinYun 博客',
+      method: 'GET',
+      target: 'https://blog.linyunlink.top/',
+      tooltip: '凌云·LinYun 博客',
+      statusPageLink: 'https://blog.linyunlink.top/',
     },
+    {
+      id: 'linyun_drive_monitor',
+      name: '凌云·LinYun 网盘',
+      method: 'GET',
+      target: 'https://drive.linyunlink.top/',
+      tooltip: '凌云·LinYun 网盘',
+      statusPageLink: 'https://drive.linyunlink.top/',
+    },
+    {
+      id: 'linyun_twikoo_monitor',
+      name: '凌云·LinYun Twikoo评论系统',
+      method: 'POST',
+      target: 'https://twikoo.linyunlink.top/',
+      tooltip: '凌云·LinYun Twikoo 评论服务API',
+      statusPageLink: 'https://twikoo.linyunlink.top/',
+    },
+    {
+      id: 'linyun_image_monitor',
+      name: '凌云·LinYun 图片托管',
+      method: 'GET',
+      target: 'https://image.linyunlink.top/',
+      tooltip: '凌云·LinYun 图片托管API',
+      statusPageLink: 'https://image.linyunlink.top/',
+    }
   ],
   // [Optional] Notification settings
   notification: {
