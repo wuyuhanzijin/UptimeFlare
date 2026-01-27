@@ -1,5 +1,28 @@
+import { Env } from '.'
 import { MonitorTarget } from '../../types/config'
 import { withTimeout, fetchTimeout } from './util'
+
+function isIpAddress(hostname: string): boolean {
+  // `URL.hostname` strips brackets for IPv6, so a `:` reliably indicates an IPv6 literal here.
+  if (hostname.includes(':')) return true
+
+  const parts = hostname.split('.')
+  if (parts.length !== 4) return false
+
+  return parts.every((part) => {
+    if (!/^\d{1,3}$/.test(part)) return false
+    const value = Number(part)
+    return value >= 0 && value <= 255
+  })
+}
+
+function getDomainOnlyIpVersionOption(hostname: string, gpUrl: URL): { ipVersion?: number } {
+  // Globalping only allows `measurementOptions.ipVersion` when `target` is a domain (it controls DNS resolution).
+  if (isIpAddress(hostname)) return {}
+
+  // Keep the original behavior for domain targets.
+  return { ipVersion: Number(gpUrl.searchParams.get('ipVersion') || 4) }
+}
 
 async function httpResponseBasicCheck(
   monitor: MonitorTarget,
@@ -66,6 +89,7 @@ export async function getStatusWithGlobalPing(
 
     if (monitor.method === 'TCP_PING') {
       const targetUrl = new URL('https://' + monitor.target) // dummy https:// to parse hostname & port
+      const ipVersionOption = getDomainOnlyIpVersionOption(targetUrl.hostname, gpUrl)
       globalPingRequest = {
         type: 'ping',
         target: targetUrl.hostname,
@@ -81,11 +105,12 @@ export async function getStatusWithGlobalPing(
           port: targetUrl.port,
           packets: 1,
           protocol: 'tcp', // TODO: icmp?
-          ipVersion: Number(gpUrl.searchParams.get('ipVersion') || 4),
+          ...ipVersionOption,
         },
       }
     } else {
       const targetUrl = new URL(monitor.target)
+      const ipVersionOption = getDomainOnlyIpVersionOption(targetUrl.hostname, gpUrl)
       if (monitor.body !== undefined) {
         throw 'custom body not supported'
       }
@@ -119,7 +144,7 @@ export async function getStatusWithGlobalPing(
                 : 443
               : Number(targetUrl.port),
           protocol: targetUrl.protocol.replace(':', ''),
-          ipVersion: Number(gpUrl.searchParams.get('ipVersion') || 4),
+          ...ipVersionOption,
         },
       }
     }
@@ -327,4 +352,63 @@ export async function getStatus(
   }
 
   return status
+}
+
+export async function doMonitor(monitor: MonitorTarget, defaultLocation: string, env: Env) {
+  let checkLocation = defaultLocation
+  let status
+
+  if (monitor.checkProxy) {
+    // Initiate a check using proxy (Geo-specific monitoring)
+    try {
+      console.log(`[${monitor.id}] Calling check proxy: ${monitor.checkProxy}`)
+      let resp
+      if (monitor.checkProxy.startsWith('worker://')) {
+        const doLoc = monitor.checkProxy.replace('worker://', '')
+        const doId = env.REMOTE_CHECKER_DO.idFromName(monitor.id)
+        const doStub = env.REMOTE_CHECKER_DO.get(doId, {
+          locationHint: doLoc as DurableObjectLocationHint,
+        })
+        resp = await doStub.getLocationAndStatus(monitor)
+        try {
+          // Kill the DO instance after use, to avoid extra resource usage
+          await doStub.kill()
+        } catch (err) {
+          // An error here is expected, ignore it
+        }
+      } else if (monitor.checkProxy.startsWith('globalping://')) {
+        resp = await getStatusWithGlobalPing(monitor)
+      } else {
+        resp = await (
+          await fetch(monitor.checkProxy, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(monitor),
+          })
+        ).json<{ location: string; status: { ping: number; up: boolean; err: string } }>()
+      }
+      checkLocation = resp.location
+      status = resp.status
+    } catch (err) {
+      console.log(`[${monitor.id}] Error calling proxy: ${err}`)
+      if (monitor.checkProxyFallback) {
+        console.log('Falling back to local check...')
+        status = await getStatus(monitor)
+      } else {
+        // TODO: more consistent error handling (throw or return?)
+        status = { ping: 0, up: false, err: 'Unknown check proxy error' }
+      }
+    }
+  } else {
+    // Initiate a check from the current location
+    status = await getStatus(monitor)
+  }
+
+  console.log(`[${monitor.id}] Check result from ${checkLocation}: up=${status.up}, ping=${status.ping}, err=${status.err}`)
+
+  return {
+    location: checkLocation,
+    status,
+    id: monitor.id,
+  }
 }
