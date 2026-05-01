@@ -35,14 +35,14 @@ monitors: [
       tooltip: '凌云·LinYun 博客',
       statusPageLink: 'https://blog.linyunlink.top/',
     },
-    {
-      id: 'linyun_drive_monitor',
-      name: '凌云·LinYun 网盘',
-      method: 'GET',
-      target: 'https://drive.linyunlink.top/',
-      tooltip: '凌云·LinYun 网盘',
-      statusPageLink: 'https://drive.linyunlink.top/',
-    },
+    // {
+    //   id: 'linyun_drive_monitor',
+    //   name: '凌云·LinYun 网盘',
+    //   method: 'GET',
+    //   target: 'https://drive.linyunlink.top/',
+    //   tooltip: '凌云·LinYun 网盘',
+    //   statusPageLink: 'https://drive.linyunlink.top/',
+    // },
     {
       id: 'linyun_twikoo_monitor',
       name: '凌云·LinYun Twikoo评论系统',
