@@ -35,21 +35,21 @@ monitors: [
       tooltip: '凌云·LinYun 博客',
       statusPageLink: 'https://blog.linyunlink.top/',
     },
-    // {
-    //   id: 'linyun_drive_monitor',
-    //   name: '凌云·LinYun 网盘',
-    //   method: 'GET',
-    //   target: 'https://drive.linyunlink.top/',
-    //   tooltip: '凌云·LinYun 网盘',
-    //   statusPageLink: 'https://drive.linyunlink.top/',
-    // },
     {
-      id: 'linyun_twikoo_monitor',
-      name: '凌云·LinYun Twikoo评论系统',
-      method: 'POST',
-      target: 'https://twikoo.linyunlink.top/',
-      tooltip: '凌云·LinYun Twikoo 评论服务API',
-      statusPageLink: 'https://twikoo.linyunlink.top/',
+      id: 'linyun_drive_monitor',
+      name: '凌云·LinYun 网盘',
+      method: 'GET',
+      target: 'https://drive.linyunlink.top/',
+      tooltip: '凌云·LinYun 网盘',
+      statusPageLink: 'https://drive.linyunlink.top/',
+    },
+    {
+      id: 'linyun_skin_monitor',
+      name: '凌云·LinYun 皮肤站',
+      method: 'GET',
+      target: 'https://skin.linyunlink.top/',
+      tooltip: '凌云·LinYun Minecraft外置登录验证',
+      statusPageLink: 'https://skin.linyunlink.top/',
     },
     {
       id: 'linyun_image_monitor',
@@ -58,7 +58,7 @@ monitors: [
       target: 'https://image.linyunlink.top/',
       tooltip: '凌云·LinYun 图片托管API',
       statusPageLink: 'https://image.linyunlink.top/',
-    }
+    },
   ],
   // [Optional] Notification settings
   notification: {
@@ -106,20 +106,20 @@ monitors: [
 
 const maintenances: MaintenanceConfig[] = [
   {
-    // [Optional] Monitor IDs to be affected by this maintenance
-    monitors: ['linyun_drive_monitor'],
-    // [Optional] default to "Scheduled Maintenance" if not specified
-    title: '值得注意',
-    // Description of the maintenance, will be shown at status page
-    body: '在服务器线路高峰期时，网盘可能存在带宽限制！',
-    // Start time of the maintenance, in UNIX timestamp or ISO 8601 format
-    start: '2026-01-01T00:00:00+08:00',
-    // [Optional] end time of the maintenance, in UNIX timestamp or ISO 8601 format
-    // if not specified, the maintenance will be considered as on-going
-    // end: '2027-01-01T00:00:00+08:00',
-    // [Optional] color of the maintenance alert at status page, default to "yellow"
-    color: 'blue',
-  },
+  //   // [Optional] Monitor IDs to be affected by this maintenance
+  //   monitors: ['linyun_drive_monitor'],
+  //   // [Optional] default to "Scheduled Maintenance" if not specified
+  //   title: '警告',
+  //   // Description of the maintenance, will be shown at status page
+  //   body: '在服务器线路高峰期时，网盘可能存在带宽限制！',
+  //   // Start time of the maintenance, in UNIX timestamp or ISO 8601 format
+  //   start: '2026-01-01T00:00:00+08:00',
+  //   // [Optional] end time of the maintenance, in UNIX timestamp or ISO 8601 format
+  //   // if not specified, the maintenance will be considered as on-going
+  //   // end: '2027-01-01T00:00:00+08:00',
+  //   // [Optional] color of the maintenance alert at status page, default to "yellow"
+  //   color: 'blue',
+  // },
 ]
 
 // Don't edit this line
